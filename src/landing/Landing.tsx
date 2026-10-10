@@ -1,11 +1,13 @@
 import { useLayoutEffect, useEffect } from 'react'
 import css from './landing.css?inline'
+import v2css from './v2.css?inline'
 import Sprite from './Sprite'
 import MenuOverlay from './MenuOverlay'
 import Hero from './Hero'
 import TrustedBy from './TrustedBy'
 import HowItWorks from './HowItWorks'
 import Features from './Features'
+import Integrations from './Integrations'
 import Pricing from './Pricing'
 import Faq from './Faq'
 import Cta from './Cta'
@@ -17,14 +19,15 @@ import { initLanding } from './effects'
 export default function Landing() {
   useLayoutEffect(() => {
     const el = document.createElement('style')
-    el.textContent = css
+    el.textContent = css + v2css
     el.dataset.landing = 'true'
     document.head.appendChild(el)
     return () => el.remove()
   }, [])
   useEffect(() => {
     document.title = 'Resolve — AI support that gets better with every conversation'
-    return initLanding()
+    const stopLanding = initLanding()
+    return () => { stopLanding() }
   }, [])
   return (
     <>
@@ -34,6 +37,7 @@ export default function Landing() {
       <TrustedBy />
       <HowItWorks />
       <Features />
+      <Integrations />
       <Pricing />
       <Faq />
       <Cta />

@@ -5,7 +5,12 @@ import { StoreProvider } from './state/store'
 import AppShell from './app/AppShell'
 import Dashboard from './app/Dashboard'
 import Conversations from './app/Conversations'
-import ComingSoon from './app/ComingSoon'
+import ConversationDetail from './app/ConversationDetail'
+import AiPerformance from './app/AiPerformance'
+import Knowledge from './app/Knowledge'
+import Customers from './app/Customers'
+import Analytics from './app/Analytics'
+import Settings from './app/Settings'
 import Login from './pages/Login'
 import './app/app.css'
 
@@ -27,7 +32,13 @@ export default function App() {
             <Route path="/app" element={<RequireAuth><AppShell /></RequireAuth>}>
               <Route index element={<Dashboard />} />
               <Route path="conversations" element={<Conversations />} />
-              {['ai-performance', 'knowledge', 'customers', 'analytics', 'teams', 'settings'].map(p => <Route key={p} path={p} element={<ComingSoon />} />)}
+              <Route path="conversations/:id" element={<ConversationDetail />} />
+              <Route path="ai-performance" element={<AiPerformance />} />
+              <Route path="knowledge" element={<Knowledge />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="teams" element={<Navigate to="/app/settings?tab=team" replace />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

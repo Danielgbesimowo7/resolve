@@ -1,9 +1,39 @@
-import type { CSSProperties } from 'react'
+import { useState } from 'react'
+
+const QA = [
+  ['What is Resolve?', 'Resolve is an AI customer support operations platform that helps monitor AI conversations, intervene when necessary and continous improve their support system.'],
+  ['How does resolve improve AI support?', 'Resolve surfaces recurring issues and knowledge gaps from real conversations, then helps your team turn them into better answers and a stronger knowledge base.'],
+  ['Does Resolve replace human support agents?', 'No. Resolve helps teams understand where AI can handle conversations independently and where human judgment is needed.'],
+  ['Can teams see individual conversations?', 'Yes. Every conversation is available with its full context, status and the agent that handled it, so teams can review or step in at any time.'],
+  ['Who is resolve for?', 'Support, CX and AI operations teams that use AI to handle customer conversations and want visibility and control over them.'],
+]
 
 export default function Faq() {
+  const [open, setOpen] = useState(0)
   return (
-    <>
-<section className="sec" id="faq" style={{textAlign: "left"} as CSSProperties}><div className="fq"><div className="fl"><div className="pillb"><i className="dot"></i>FAQS</div><h2 className="tw" data-t="Frequently asked questions" style={{textAlign: "left", margin: "24px 0 0"} as CSSProperties}></h2><p className="lead reveal" style={{margin: "24px 0 32px", maxWidth: "521px", textAlign: "left"} as CSSProperties}>Here’s everything you need to know to get started.</p><div className="help reveal"><i className="gl2 a1"></i><i className="gl2 a2"></i><p>Can’t find the question you are looking for?</p><a className="btn dark" href="#">Send us a mail</a></div></div><div className="fr reveal"><div className="q open"><button aria-expanded="true"><span>What is Resolve?</span><svg className="ico pl"><use href="#h-plus" /></svg><svg className="ico mn"><use href="#h-minus" /></svg></button><div className="a"><div><p>Resolve is an AI customer support operations platform that helps monitor AI conversations, intervene when necessary and continous improve their support system.</p></div></div></div><div className="q"><button aria-expanded="false"><span>How does resolve improve AI support?</span><svg className="ico pl"><use href="#h-plus" /></svg><svg className="ico mn"><use href="#h-minus" /></svg></button><div className="a"><div><p>Resolve surfaces recurring issues and knowledge gaps from real conversations, then suggests improvements your team can review before your AI uses them.</p></div></div></div><div className="q"><button aria-expanded="false"><span>Does Resolve replace human support agents?</span><svg className="ico pl"><use href="#h-plus" /></svg><svg className="ico mn"><use href="#h-minus" /></svg></button><div className="a"><div><p>No. Resolve helps teams understand where AI can handle conversations independently and where human judgment is needed.</p></div></div></div><div className="q"><button aria-expanded="false"><span>Can teams see individual conversations?</span><svg className="ico pl"><use href="#h-plus" /></svg><svg className="ico mn"><use href="#h-minus" /></svg></button><div className="a"><div><p>Yes. Every conversation is available with its full context, status and the agent that handled it, so your team can review it or take over.</p></div></div></div><div className="q"><button aria-expanded="false"><span>Who is resolve for?</span><svg className="ico pl"><use href="#h-plus" /></svg><svg className="ico mn"><use href="#h-minus" /></svg></button><div className="a"><div><p>Support, CX and AI operations teams that use AI to handle customer conversations and want visibility and control over them.</p></div></div></div></div></div></section>
-    </>
+    <section className="sec" id="faq" style={{ textAlign: 'left' }}>
+      <div className="fq">
+        <div className="fl">
+          <div className="pillb"><i className="dot"></i>FAQS</div>
+          <h2 className="tw" data-t="Frequently asked|*questions*" style={{ textAlign: 'left', margin: '24px 0 0' }}></h2>
+          <p className="lead reveal" style={{ margin: '24px 0 32px', maxWidth: 521, textAlign: 'left' }}>Here’s everything you need to know to get started.</p>
+          <div className="help reveal">
+            <p>Can’t find the question you are looking for?</p>
+            <a className="btn dark" href="mailto:hello@resolve.app">Send us a mail</a>
+          </div>
+        </div>
+        <div className="fr">
+          {QA.map(([q, a], i) => (
+            <div key={q} className={'fi' + (open === i ? ' open' : '')}>
+              <button aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
+                <span>{q}</span>
+                <i className="fchev"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg></i>
+              </button>
+              <div className="fa"><div><p>{a}</p></div></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }

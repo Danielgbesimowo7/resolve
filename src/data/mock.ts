@@ -1,7 +1,15 @@
 // Deterministic, realistic mock data. Swap this module for API calls when a backend exists.
 export type Status = 'needs_attention' | 'resolved' | 'human' | 'unresolved'
 export interface Message { id: string; from: 'customer' | 'ai' | 'agent'; text: string; at: number }
+export interface Note { id: string; by: string; text: string; at: number }
+export type Channel = 'Website' | 'Email' | 'WhatsApp' | 'iOS app' | 'Android app'
+export type Plan = 'Free' | 'Pro' | 'Business' | 'Enterprise'
+export const CHANNELS: Channel[] = ['Website', 'Email', 'WhatsApp', 'iOS app', 'Android app']
+export const PLANS: Plan[] = ['Free', 'Pro', 'Business', 'Enterprise']
+export type Sentiment = 'Frustrated' | 'Neutral' | 'Positive'
 export interface Conversation {
+  channel: Channel; plan: Plan; intent: string; sentiment: Sentiment; prior: number; since: string; summary: string
+  suggestion: { title: string; text: string; cta: string }; notes: Note[]
   id: string; name: string; email: string; avatar: string | null
   issue: string; preview: string; status: Status; agent: string; human: boolean
   createdAt: number; confidence: number; respSec: number; messages: Message[]
@@ -32,6 +40,8 @@ const TOPICS: Topic[] = [
   { issue: 'Team invite', ask: "My teammate didn't get the invite email.", fix: "I've resent the invite. It can take a couple of minutes to arrive.", esc: "The invite is blocked by their mail server. A teammate will find another way in.", ai: 'Support AI' },
 ]
 
+const INTENT = ['Billing', 'Account', 'Account', 'Technical', 'Product', 'Billing', 'Technical', 'Billing', 'Account', 'Shipping', 'Billing', 'Billing', 'Account', 'Account']
+const SINCE = ['Jan 2024', 'Mar 2023', 'Aug 2024', 'Nov 2022', 'Feb 2025', 'Jun 2024']
 const NAMES = ['Maya Chen', 'Alex Morgan', 'Jordan Lee', 'Taylor Kim', 'Casey Brown', 'Riley Patel', 'Quinn Foster', 'Morgan Bell', 'Avery Wllson', 'Reese Hall']
 const EXTRA = ['Sam Rivera', 'Jamie Park', 'Drew Collins', 'Skyler Nguyen', 'Harper Lane', 'Emerson Cole', 'Rowan Blake', 'Kai Mitchell', 'Sage Turner', 'Parker Hayes', 'Dakota Reed', 'Finley Brooks', 'Logan Price', 'Marley Stone', 'Phoenix Ward', 'Remy Fox', 'Blair Hughes', 'Ellis Shaw', 'Noel Grant', 'Tatum Webb', 'Oakley Frost', 'Lennon Pierce', 'Sutton Hale', 'Wren Dalton', 'Arden Moss', 'Zion Hart', 'Briar Cole', 'Indigo Vale', 'Emery Rhodes', 'Shiloh West']
 const DOMAINS = ['acme.com', 'techo.com', 'pixel.com', 'goblex.com', 'northstar.com', 'zenith.co', 'orbitlabs.com', 'horizon.co', 'valleyco.com', 'lumen.co', 'brightly.io', 'kitebox.app']
@@ -43,6 +53,7 @@ const DESIGN: Array<[number, number, Status, string]> = [
 ]
 const DESIGN_TOPIC = [0, 1, 2, 0, 3, 4, 5, 6, 7, 8]
 
+function pickChannel(x: number): Channel { return x < 0.7 ? 'Website' : x < 0.88 ? 'Email' : x < 0.95 ? 'WhatsApp' : 'iOS app' }
 function email(name: string, i: number) {
   const [f, l] = name.toLowerCase().split(' ')
   return `${f}@${DOMAINS[i % DOMAINS.length]}`.replace('wllson', 'wilson') && `${f}${i < 10 ? '' : '.' + l}@${DOMAINS[i % DOMAINS.length]}`
@@ -67,7 +78,11 @@ export function buildConversations(now = Date.now()): Conversation[] {
     const human = status === 'human' || (agentName !== null && !agentName.includes('AI'))
     const agent = agentName ?? (human ? TEAM[1 + Math.floor(r() * 3)] : t.ai)
     const messages = thread(r, t, status, human, agent, createdAt)
-    return { id: `c${i + 1}`, name, email: email(name, i), avatar, issue: t.issue, preview: t.ask, status, agent, human, createdAt, confidence: status === 'needs_attention' ? 28 + Math.round(r() * 24) : 72 + Math.round(r() * 26), respSec: 22 + Math.round(r() * 48), messages }
+    const confidence = status === 'needs_attention' ? 28 + Math.round(r() * 24) : 72 + Math.round(r() * 26)
+    const sug = ti === 0 ? { title: 'Review duplicate charge', text: 'The customer was charged twice for their Pro plan subscription on April 21 and April 22', cta: 'View billing details' } : { title: `Review ${t.issue.toLowerCase()}`, text: `Check the account activity and the AI's last reply before responding to this ${t.issue.toLowerCase()}.`, cta: 'View account details' }
+    return { id: `c${i + 1}`, name, email: email(name, i), avatar, issue: t.issue, preview: t.ask, status, agent, human, createdAt, confidence, respSec: 22 + Math.round(r() * 48), messages,
+      channel: pickChannel(r()), plan: PLANS[Math.floor(r() * 4)], intent: INTENT[ti], sentiment: status === 'needs_attention' ? 'Frustrated' : status === 'resolved' ? 'Positive' : 'Neutral', prior: 1 + Math.floor(r() * 30), since: SINCE[Math.floor(r() * SINCE.length)],
+      summary: `Customer needs help with ${/^[aeiou]/i.test(t.issue) ? 'an' : 'a'} ${t.issue.toLowerCase()}`, suggestion: sug, notes: [] }
   }
   DESIGN.forEach(([ni, mins, status, agent], i) => out.push(make(i, NAMES[ni], NAMES[ni].split(' ')[0].toLowerCase(), DESIGN_TOPIC[i], status, agent, now - mins * 60_000)))
   const day = 86_400_000

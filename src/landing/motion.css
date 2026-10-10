@@ -1,0 +1,85 @@
+/* ===== Motion layer: How it works + Features =====
+   Everything below only runs while a card is in view (.fx.go) and respects prefers-reduced-motion. */
+.hc,.fc{--rx:0deg;--ry:0deg}
+.pan2{transition:transform .5s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.hc.tilt .pan2,.fc.tilt .pan2{transform:perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry));transition:transform .12s linear}
+.cv>*{translate:calc(var(--mx,0)*var(--z,0)*1px) calc(var(--my,0)*var(--z,0)*1px);transition:translate .25s ease-out}
+/* cursor spotlight */
+.hc::after,.fc::after{content:"";position:absolute;inset:0;border-radius:24px;pointer-events:none;opacity:0;transition:opacity .35s;background:radial-gradient(460px circle at var(--px,50%) var(--py,50%),rgba(1,200,138,.10),transparent 46%)}
+.hc:hover::after,.fc:hover::after{opacity:1}
+/* scroll-linked rail that connects the three steps */
+#how .grid{position:relative}
+.how-rail{position:absolute;left:16.66%;right:16.66%;top:-5.5px;height:2px;pointer-events:none;background:repeating-linear-gradient(90deg,#d6d6d6 0 6px,transparent 6px 12px)}
+.how-rail>i{position:absolute;inset:0;background:var(--g);border-radius:2px;transform-origin:left;transform:scaleX(var(--p,0));box-shadow:0 0 14px rgba(1,200,138,.7)}
+.num::after{content:"";position:absolute;inset:-4.8px;border-radius:50%;border:2px solid #01c88a;opacity:0;pointer-events:none}
+.num.lit::after{animation:ripple 1.5s ease-out}
+@keyframes ripple{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.1)}}
+@media(max-width:1100px){.how-rail{display:none}}
+/* ---- 1 · Monitor: a live feed of conversations ---- */
+.fx .m1-card,.fx .m1-res{opacity:0}
+.fx.go .m1-card{animation:m1cycle 9s cubic-bezier(.2,.8,.2,1) infinite both;animation-delay:calc(var(--d) + .8s + var(--ci,0)*3s)}
+@keyframes m1cycle{0%{opacity:0;transform:translateY(46px) scale(.95)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-34px) scale(.97)}}
+.fx.go .m1-res{animation:m1res 9s ease infinite both,floaty 4.5s ease-in-out infinite;animation-delay:calc(var(--d) + .8s),0s}
+@keyframes m1res{0%,36%{opacity:0;scale:.5}40%{opacity:1;scale:1.12}44%,62%{opacity:1;scale:1}68%,100%{opacity:0;scale:.9}}
+/* ---- 2 · Intervene: AI hands over to a human ---- */
+.fx .m2-bubble,.fx .m2-human,.fx .m2-pill{opacity:0}
+.fx.go .m2-bubble{animation:m2b 10s cubic-bezier(.2,.8,.2,1) infinite both;animation-delay:calc(var(--d) + .6s)}
+@keyframes m2b{0%{opacity:0;transform:translateY(28px) scale(.96)}6%,92%{opacity:1;transform:none}97%,100%{opacity:0;transform:translateY(-10px)}}
+.fx.go .m2-pill{animation:m2p 10s ease infinite both;animation-delay:calc(var(--d) + .6s)}
+@keyframes m2p{0%,13%{opacity:0;scale:.2}19%{opacity:1;scale:1.14}23%,92%{opacity:1;scale:1}97%,100%{opacity:0;scale:.85}}
+.fx.go .m2-human{animation:m2h 10s cubic-bezier(.2,.8,.2,1) infinite both;animation-delay:calc(var(--d) + .6s)}
+@keyframes m2h{0%,36%{opacity:0;transform:translateY(46px) scale(.96)}44%{opacity:1;transform:translateY(-5px)}48%,92%{opacity:1;transform:none}97%,100%{opacity:0;transform:translateY(10px)}}
+.m2-pill{position:relative;display:flex;align-items:center;gap:8px;background:#01c88a;border:1px solid #eaeaea;border-radius:16px;padding:16px 8px}
+.m2-pill::after{content:"";position:absolute;inset:-1px;border-radius:17px;border:2px solid rgba(1,200,138,.55);opacity:0}
+.fx.go .m2-pill::after{animation:m2ring 10s ease-out infinite both;animation-delay:calc(var(--d) + .6s)}
+@keyframes m2ring{0%,19%{opacity:0;transform:scale(1)}20%{opacity:.9}30%,100%{opacity:0;transform:scale(1.4,1.7)}}
+.m2-pill-i{display:grid;place-items:center;background:#fff;border:.9px solid #eaeaea;border-radius:52px;padding:7.2px}
+.m2-pill-t{display:flex;flex-direction:column;align-items:center;gap:4.75px;color:#fff;font-weight:500}.m2-pill-t>span{font-size:10.56px}.m2-pill-t b{font-size:16.9px;font-weight:500}
+/* ---- 3 · Improve: questions drop into the knowledge base ---- */
+.fx .m3-q{opacity:0}
+.fx.go .m3-a{animation:m3a 9s ease-in infinite both;animation-delay:calc(var(--d) + .6s)}
+.fx.go .m3-b{animation:m3b 9s ease-in infinite both;animation-delay:calc(var(--d) + .6s)}
+.fx.go .m3-c{animation:m3c 9s ease-in infinite both;animation-delay:calc(var(--d) + .6s)}
+@keyframes m3a{0%{opacity:0;transform:translateY(-26px)}6%,17.5%{opacity:1;transform:none}29%{opacity:0;transform:translateY(150px) scale(.55)}30%,90%{opacity:0;transform:translateY(-26px)}97%,100%{opacity:1;transform:none}}
+@keyframes m3b{0%{opacity:0;transform:translateY(-26px)}6%,44%{opacity:1;transform:none}55.5%{opacity:0;transform:translateY(140px) scale(.55)}56%,90%{opacity:0;transform:translateY(-26px)}97%,100%{opacity:1;transform:none}}
+@keyframes m3c{0%{opacity:0;transform:translateY(-26px)}6%,71%{opacity:1;transform:none}82%{opacity:0;transform:translateY(120px) scale(.55)}83%,90%{opacity:0;transform:translateY(-26px)}97%,100%{opacity:1;transform:none}}
+.fx.go .m3-icon .hb{animation:m3pulse 9s ease-out infinite both;animation-delay:calc(var(--d) + .6s)}
+@keyframes m3pulse{0%,27%{scale:1;box-shadow:0 0 0 0 rgba(1,200,138,0)}29%{scale:1.18;box-shadow:0 0 0 0 rgba(1,200,138,.55)}35%,53%{scale:1;box-shadow:0 0 0 18px rgba(1,200,138,0)}55.5%{scale:1.18;box-shadow:0 0 0 0 rgba(1,200,138,.55)}61%,80%{scale:1;box-shadow:0 0 0 18px rgba(1,200,138,0)}82%{scale:1.18;box-shadow:0 0 0 0 rgba(1,200,138,.55)}88%,100%{scale:1;box-shadow:0 0 0 18px rgba(1,200,138,0)}}
+.m3-plus{position:absolute;z-index:6;opacity:0;font:600 14px Inter,sans-serif;color:#01c88a;background:#fff;border:1px solid #bafae6;border-radius:99px;padding:2px 9px;box-shadow:0 8px 20px rgba(1,200,138,.25)}
+.fx.go .m3-plus{animation:m3plus 9s ease-out infinite both;animation-delay:calc(var(--d) + .6s)}
+@keyframes m3plus{0%,28%{opacity:0;transform:translateY(0)}31%{opacity:1;transform:translateY(-16px)}38%{opacity:0;transform:translateY(-34px)}39%,55%{opacity:0}58%{opacity:1;transform:translateY(-16px)}65%{opacity:0;transform:translateY(-34px)}66%,81%{opacity:0}84%{opacity:1;transform:translateY(-16px)}91%,100%{opacity:0;transform:translateY(-34px)}}
+.m3-dot,.f2-dot{position:absolute;z-index:6;width:7px;height:7px;border-radius:50%;background:#01c88a;box-shadow:0 0 10px rgba(1,200,138,.9);offset-rotate:0deg;offset-distance:0%;opacity:0;pointer-events:none}
+.fx.go .m3-dot{animation:m3flow 2.2s linear infinite}
+@keyframes m3flow{0%{offset-distance:0%;opacity:0}12%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+/* ---- Features ---- */
+.f1-scan{position:absolute;top:0;bottom:0;left:0;width:110px;background:linear-gradient(90deg,transparent,rgba(1,200,138,.16),transparent);transform:translateX(-140px);pointer-events:none;z-index:5}
+.fx.go .f1-scan{animation:f1scan 6s ease-in-out 2.4s infinite}
+@keyframes f1scan{0%{transform:translateX(-140px)}38%,100%{transform:translateX(880px)}}
+@keyframes sweepA{from{stroke-dasharray:0 100}}@keyframes sweepB{from{stroke-dasharray:0 100}}
+@keyframes drawA{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}@keyframes drawB{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.fx.go.ra .sg{animation:sweepA 1.4s ease .2s both}.fx.go.rb .sg{animation:sweepB 1.4s ease .2s both}
+.fx.go.ra .sp{animation:drawA 1.4s ease .2s both}.fx.go.rb .sp{animation:drawB 1.4s ease .2s both}
+.i0{--i:0}.i1{--i:1}.i2{--i:2}
+.fx.go .itm3,.fx.go .itm3.k{animation:f2hi 7.5s ease infinite both;animation-delay:calc(var(--i,0)*2.5s)}
+@keyframes f2hi{0%,28%{border-color:#01c88a;box-shadow:0 0 0 3px rgba(1,200,138,.16);color:#222}34%,100%{border-color:#eee;box-shadow:none;color:#7a7a7a}}
+.fx.go .f2-dot{animation:f2flow 7.5s linear infinite}
+@keyframes f2flow{0%{offset-distance:0%;opacity:0}3%{opacity:1}26%{opacity:1}30%{offset-distance:100%;opacity:0}100%{offset-distance:100%;opacity:0}}
+.gbtn,.gbtn2,.gbtn3{position:relative;overflow:hidden}
+.gbtn2::after,.gbtn3::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);pointer-events:none}
+.fx.go .gbtn2::after,.fx.go .gbtn3::before{animation:shine 3.2s ease-in-out 1.8s infinite}
+@keyframes shine{0%{transform:translateX(-120%)}40%,100%{transform:translateX(120%)}}
+.f3-scan{position:absolute;left:0;right:0;top:0;height:54px;background:linear-gradient(180deg,transparent,rgba(1,200,138,.17),transparent);pointer-events:none;z-index:3;transform:translateY(-70px);opacity:0}
+.fx.go .f3-scan{animation:f3scan 4.8s ease-in-out 1.6s infinite}
+@keyframes f3scan{0%{opacity:1;transform:translateY(-70px)}78%{opacity:1;transform:translateY(430px)}79%,100%{opacity:0;transform:translateY(430px)}}
+.f3-t .cr3:nth-child(3){--r:0}.f3-t .cr3:nth-child(4){--r:1}.f3-t .cr3:nth-child(5){--r:2}.f3-t .cr3:nth-child(6){--r:3}.f3-t .cr3:nth-child(7){--r:4}.f3-t .cr3:nth-child(8){--r:5}.f3-t .cr3:nth-child(9){--r:6}.f3-t .cr3:nth-child(10){--r:7}
+.fx.go .f3-t .cr3:not(.hdr){animation:f3row 4.8s ease infinite both;animation-delay:calc(1.6s + var(--r,0)*.4s)}
+@keyframes f3row{0%,100%{background:#fff}4%,13%{background:#f1fffa}22%{background:#fff}}
+.f4-cur{position:absolute;left:0;top:0;z-index:20;opacity:0;pointer-events:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.3))}
+.fx.go .f4-cur{animation:f4cur 8s ease-in-out infinite}
+@keyframes f4cur{0%{opacity:0;transform:translate(420px,380px)}8%{opacity:1;transform:translate(420px,380px)}38%{opacity:1;transform:translate(168px,290px)}42%{transform:translate(168px,290px) scale(.8)}46%{transform:translate(168px,290px) scale(1)}68%{opacity:1;transform:translate(168px,290px)}82%,100%{opacity:0;transform:translate(280px,345px)}}
+.gbtn3::after{content:"";position:absolute;inset:0;border-radius:22px;border:3px solid rgba(255,255,255,.7);opacity:0;pointer-events:none}
+.fx.go .gbtn3{animation:f4press 8s ease infinite}.fx.go .gbtn3::after{animation:f4rip 8s ease-out infinite}
+@keyframes f4press{0%,40%{transform:scale(1)}43%{transform:scale(.94)}47%{transform:scale(1.02)}50%,100%{transform:scale(1)}}
+@keyframes f4rip{0%,42%{opacity:0;transform:scale(1)}43%{opacity:.9}62%,100%{opacity:0;transform:scale(1.25,1.7)}}
+.fx.go .f5-av{animation:ring 2.4s ease-out infinite}
+@media(prefers-reduced-motion:reduce){.m1-card{opacity:1!important}.m1-card+.m1-card{display:none}.m1-res,.m2-bubble,.m2-human,.m2-pill,.m3-q{opacity:1!important}.fx *{animation:none!important}.cv>*{translate:none!important}.how-rail>i{transform:scaleX(1)}}

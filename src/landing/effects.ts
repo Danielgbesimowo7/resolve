@@ -62,7 +62,7 @@ new IntersectionObserver(([e])=>{visible=e.isIntersecting;if(visible)tour()},{th
 /* Trusted-by infinite marquee */
 
 /* Section headings use the same flexible reveal */
-document.querySelectorAll('.tw').forEach(el=>{el.setAttribute('aria-label',el.dataset.t.replace('|',' '));wordsReveal(el,el.dataset.t.split('|').map(l=>[[l,'']]),.5)});
+document.querySelectorAll('.tw').forEach(el=>{el.setAttribute('aria-label',el.dataset.t.replace('|',' ').replace(/\*/g,''));wordsReveal(el,el.dataset.t.split('|').map(l=>l.split('*').map((t,i)=>[t,i%2?'gr':'']).filter(p=>p[0])),.5)});
 /* Counters, typed text, and scroll-triggered illustration playback */
 const fmt=(el,v)=>el.textContent=(el.dataset.comma?Math.round(v).toLocaleString('en-US'):v.toFixed(+el.dataset.dec||0))+(el.dataset.suf||'');
 function runCounts(root){root.querySelectorAll('[data-to]').forEach(el=>{const a=+el.dataset.from||0,b=+el.dataset.to,dur=+el.dataset.dur||1400,t0=performance.now()+(+el.dataset.delay||0),id=el._id=(el._id||0)+1;fmt(el,a);
@@ -83,7 +83,7 @@ document.querySelectorAll('#tgl button').forEach(b=>b.addEventListener('click',(
  document.querySelectorAll('.pv').forEach(el=>{const to=Math.round(+el.dataset.m*(y?12*.8:1)),from=+el.textContent.replace(/[$,]/g,''),t0=performance.now();(function f(n){const p=Math.min(1,(n-t0)/600);el.textContent='$'+Math.round(from+(to-from)*(1-Math.pow(1-p,3))).toLocaleString('en-US');if(p<1)requestAnimationFrame(f)})(t0)});
  document.querySelectorAll('.per').forEach(s=>{s.style.opacity=0;setTimeout(()=>{s.textContent=y?'/yearly':'/month';s.style.opacity=1},200)})}));
 /* FAQ accordion: one item open at a time */
-document.querySelectorAll('.q button').forEach(b=>b.addEventListener('click',()=>{const q=b.parentElement,was=q.classList.contains('open');document.querySelectorAll('.q').forEach(x=>{x.classList.remove('open');x.querySelector('button').setAttribute('aria-expanded','false')});if(!was){q.classList.add('open');b.setAttribute('aria-expanded','true')}}));
+
 const PHOTOS=FACES;
 function ph(e,k){const u=PHOTOS[k];if(!u)return;e.style.backgroundImage=`url("${u}")`;e.style.backgroundSize="cover";e.style.backgroundPosition="center";e.textContent=""}
 document.querySelectorAll("[data-p]").forEach(e=>ph(e,e.dataset.p));
