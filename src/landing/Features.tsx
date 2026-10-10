@@ -26,7 +26,7 @@ export default function Features() {
         <ul className="vlist" role="tablist" aria-orientation="vertical">
           {FEATS.map((f, n) => (
             <li key={f.t} className={n === i ? 'on' : ''}>
-              <button role="tab" aria-selected={n === i} onClick={() => pick(n)}>
+              <button role="tab" aria-selected={n === i} onClick={e => { pick(n); e.currentTarget.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }) }}>
                 <strong><i />{f.t}</strong>
                 <span>{f.d}</span>
               </button>
@@ -35,7 +35,7 @@ export default function Features() {
         </ul>
         <div className="vshow">
           <div className="vfr">
-            <Stage w={746} h={555} minK={0.6}>
+            <Stage w={746} h={555} minK={0.6} box={[0, 0, 746, 555]}>
               <div className="vslide" key={`${i}-${cycle}`}>
                 {i === 0 && <div className="vpos" style={{ left: 10, top: 46 }}><AiPerf play={on} /></div>}
                 {i === 1 && <KnowFlow play={on} />}

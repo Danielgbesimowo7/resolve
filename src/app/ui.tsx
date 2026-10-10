@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { ArrowUp02Icon } from '@hugeicons/core-free-icons'
+import { ArrowUp02Icon, ArrowDown01Icon, Tick02Icon } from '@hugeicons/core-free-icons'
 import { FACES } from '../faces'
 import { STATUS_LABEL, type Conversation, type Status } from '../data/mock'
 
@@ -55,4 +55,64 @@ export function useNarrow(max = 700) {
   const [n, setN] = useState(() => typeof window !== 'undefined' && window.matchMedia(q).matches)
   useEffect(() => { const m = window.matchMedia(q), f = () => setN(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f) }, [q])
   return n
+}
+
+
+/** Floating menu anchored to an element. position:fixed so table/card overflow never clips it; flips above when there is no room below. */
+export function Popover({ anchor, open, onClose, align = 'right', className = '', children, minWidth }: { anchor: RefObject<HTMLElement | null>; open: boolean; onClose: () => void; align?: 'left' | 'right'; className?: string; children: ReactNode; minWidth?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ top: number; left?: number; right?: number; w: number } | null>(null)
+  useLayoutEffect(() => {
+    if (!open) { setPos(null); return }
+    const a = anchor.current, m = ref.current
+    if (!a || !m) return
+    const r = a.getBoundingClientRect(), mh = m.offsetHeight, mw = Math.max(m.offsetWidth, r.width, minWidth ?? 0)
+    const below = r.bottom + 8 + mh <= innerHeight - 8
+    const top = below ? r.bottom + 8 : Math.max(8, r.top - 8 - mh)
+    if (align === 'right') setPos({ top, right: Math.max(8, innerWidth - r.right), w: r.width })
+    else setPos({ top, left: Math.min(Math.max(8, r.left), Math.max(8, innerWidth - mw - 8)), w: r.width })
+  }, [open, anchor, align, minWidth])
+  useEffect(() => {
+    if (!open) return
+    const down = (e: Event) => { const t = e.target as Node; if (!ref.current?.contains(t) && !anchor.current?.contains(t)) onClose() }
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const away = (e: Event) => { if (!ref.current?.contains(e.target as Node)) onClose() }
+    document.addEventListener('pointerdown', down); document.addEventListener('keydown', key)
+    window.addEventListener('scroll', away, true); window.addEventListener('resize', onClose)
+    return () => { document.removeEventListener('pointerdown', down); document.removeEventListener('keydown', key); window.removeEventListener('scroll', away, true); window.removeEventListener('resize', onClose) }
+  }, [open, onClose, anchor])
+  if (!open) return null
+  return <div ref={ref} className={'rs-fpop ' + className} style={{ top: pos?.top ?? 0, left: pos?.left, right: pos?.right, minWidth: Math.max(pos?.w ?? 0, minWidth ?? 0), visibility: pos ? 'visible' : 'hidden' }}>{children}</div>
+}
+
+/** Styled replacement for a native <select>. `cls` is the wrapper look (rs-range, rs-dd, rs-sel); `lead` is an optional leading icon. */
+export function Dd({ cls, value, onChange, options, label, display, lead, disabled, align = 'left' }: { cls: string; value: string; onChange: (v: string) => void; options: Array<[string, string]>; label: string; display: ReactNode; lead?: ReactNode; disabled?: boolean; align?: 'left' | 'right' }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  return (
+    <div ref={ref} className={`${cls} rs-ddw${disabled ? ' off' : ''}`}>
+      <button type="button" className="rs-ddb" aria-haspopup="listbox" aria-expanded={open} aria-label={label} disabled={disabled} onClick={() => setOpen(o => !o)}>
+        {lead}<span>{display}</span><Icon icon={ArrowDown01Icon} size={24} className={open ? 'rs-flipi' : ''} />
+      </button>
+      <Popover anchor={ref} open={open} onClose={() => setOpen(false)} align={align} className="rs-dlist" minWidth={180}>
+        <div role="listbox" aria-label={label}>
+          {options.map(([v, l]) => <button type="button" role="option" aria-selected={v === value} key={v} className={v === value ? 'on' : ''} onClick={() => { onChange(v); setOpen(false) }}><span>{l}</span>{v === value && <Icon icon={Tick02Icon} size={18} />}</button>)}
+        </div>
+      </Popover>
+    </div>
+  )
+}
+
+/** current pixel width of an element (updates on resize) */
+export function useWidth<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+  const [w, setW] = useState(0)
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver(() => setW(el.clientWidth))
+    ro.observe(el); setW(el.clientWidth)
+    return () => ro.disconnect()
+  }, [])
+  return [ref, w] as const
 }

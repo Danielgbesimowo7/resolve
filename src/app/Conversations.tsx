@@ -1,15 +1,27 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { FilterHorizontalIcon, MoreHorizontalIcon, MoreVerticalIcon } from '@hugeicons/core-free-icons'
 import { useStore } from '../state/store'
 import { useAuth } from '../state/auth'
-import { timeAgo, type Status } from '../data/mock'
-import { Avatar, Icon, StatusPill } from './ui'
+import { timeAgo, type Conversation, type Status } from '../data/mock'
+import { Avatar, Icon, Popover, StatusPill } from './ui'
 import { AgentCell, RangePicker } from './Dashboard'
 import FilterPanel, { NO_FILTERS, type Filters } from './FilterPanel'
 
 const TABS: Array<{ k: 'all' | Status; l: string; c?: string }> = [{ k: 'all', l: 'All' }, { k: 'resolved', l: 'AI resolved', c: '#01c88a' }, { k: 'needs_attention', l: 'Needs attention', c: '#fb2239' }, { k: 'human', l: 'Human', c: '#398ef9' }, { k: 'unresolved', l: 'Unresolved', c: '#fbc014' }]
 const PAGE = 10
+
+function RowMenu({ c, open, setOpen, onTake, onResolve, onReopen }: { c: Conversation; open: boolean; setOpen: (o: boolean) => void; onTake: () => void; onResolve: () => void; onReopen: () => void }) {
+  const ref = useRef<HTMLButtonElement>(null)
+  return (<>
+    <button ref={ref} className="rs-dots" aria-label="Row actions" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)}><Icon icon={MoreHorizontalIcon} size={24} /></button>
+    <Popover anchor={ref} open={open} onClose={() => setOpen(false)} align="right" className="rs-rowm" minWidth={170}>
+      <Link to={`/app/conversations/${c.id}`}>Open</Link>
+      {!c.human && <button onClick={onTake}>Take over</button>}
+      {c.status !== 'resolved' ? <button onClick={onResolve}>Mark resolved</button> : <button onClick={onReopen}>Reopen</button>}
+    </Popover>
+  </>)
+}
 
 export default function Conversations() {
   const { conversations, state, dispatch } = useStore()
@@ -52,8 +64,7 @@ export default function Conversations() {
               <span className="rs-cu"><Avatar c={c} size={40} /><span><b>{c.name}</b><small>{c.email}</small></span></span>
               <span className="rs-is"><span>{c.issue}</span><small>{c.preview}</small></span>
               <span><StatusPill s={c.status} /></span><span><AgentCell c={c} /></span><span className="rs-plain">{timeAgo(c.createdAt)}</span>
-              <span className="rs-rel rs-end" onClick={e => e.stopPropagation()}><button className="rs-dots" aria-label="Row actions" onClick={() => setMenu(menu === c.id ? null : c.id)}><Icon icon={MoreHorizontalIcon} size={24} /></button>
-                {menu === c.id && <div className="rs-pop rs-rowm"><Link to={`/app/conversations/${c.id}`}>Open</Link>{!c.human && <button onClick={() => { dispatch({ type: 'takeover', ids: [c.id], agent: me }); setMenu(null) }}>Take over</button>}{c.status !== 'resolved' ? <button onClick={() => { dispatch({ type: 'resolve', id: c.id }); setMenu(null) }}>Mark resolved</button> : <button onClick={() => { dispatch({ type: 'reopen', id: c.id }); setMenu(null) }}>Reopen</button>}</div>}</span>
+              <span className="rs-rel rs-end" onClick={e => e.stopPropagation()}><RowMenu c={c} open={menu === c.id} setOpen={o => setMenu(o ? c.id : null)} onTake={() => { dispatch({ type: 'takeover', ids: [c.id], agent: me }); setMenu(null) }} onResolve={() => { dispatch({ type: 'resolve', id: c.id }); setMenu(null) }} onReopen={() => { dispatch({ type: 'reopen', id: c.id }); setMenu(null) }} /></span>
             </div>))}
           {rows.length === 0 && <p className="rs-empty">No conversations match your filters.</p>}
         </div>

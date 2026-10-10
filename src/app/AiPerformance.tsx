@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight02Icon, ArrowUp02Icon, Clock01Icon, GoogleGeminiIcon } from '@hugeicons/core-free-icons'
 import { useStore } from '../state/store'
 import { buckets, intentStats, smooth, summary } from './metrics'
-import { Avatar, CircleCheckBig, Icon, Scale3d, StatCards, useNarrow } from './ui'
+import { Avatar, CircleCheckBig, Icon, Scale3d, StatCards, useNarrow, useWidth } from './ui'
 import { Donut, RangePicker } from './Dashboard'
 
 const FACE: Record<string, string> = { Billing: 'maya', Account: 'alex', Refund: 'jordan', Technicals: 'taylor', General: 'casey' }
@@ -28,16 +28,29 @@ function Over({ data }: { data: ReturnType<typeof buckets> }) {
   const W = 770, X0 = narrow ? 10 : 50, PW = W - X0 - 6, Y0 = 6, H = 202
   const x = (i: number) => X0 + (i * PW) / (data.length - 1), y = (v: number) => Y0 + H - (v / 100) * H
   const series = [{ k: 'g', v: data.map(d => d.rate) }, { k: 'p', v: data.map(d => d.esc + 60) }, { k: 'b', v: data.map(d => d.conf * 0.35) }] as const
+  const [hover, setHover] = useState<number | null>(null)
+  const active = hover ?? Math.round((data.length - 1) * 0.57)
+  const [wref, cw] = useWidth<HTMLDivElement>()
+  const ax = x(active), tw = 186, px = (ax / W) * cw, flip = cw > 0 && px + 22 + tw > cw - 4
+  const tipTop = Math.max(0, Math.min(y(Math.min(100, data[active].rate)), y(Math.min(100, data[active].esc + 60))) - 20)
   return (
-    <div className="rs-chartw" style={{ height: 250 }}>
+    <div ref={wref} className="rs-chartw" style={{ height: 250 }} onPointerLeave={() => setHover(null)} onPointerMove={e => { const r = e.currentTarget.getBoundingClientRect(), px = ((e.clientX - r.left) / r.width) * W; setHover(data.reduce((b, _, i) => (Math.abs(x(i) - px) < Math.abs(x(b) - px) ? i : b), 0)) }}>
       {[0, 25, 50, 75, 100].map(t => <span key={t} className="rs-yl" style={{ top: y(t) }}>{t}</span>)}
       <svg viewBox={`0 0 ${W} 250`} preserveAspectRatio="none">
         <defs>{(['g', 'p', 'b'] as const).map(k => <linearGradient key={k} id={`ov${k}`} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor={COL[k]} stopOpacity={k === 'g' ? 0.1 : 0.18} /><stop offset="1" stopColor={COL[k]} stopOpacity="0" /></linearGradient>)}</defs>
         {[0, 25, 50, 75, 100].map(t => <line key={t} x1={X0} x2={W} y1={y(t)} y2={y(t)} stroke="#eef0f0" />)}
         {data.map((_, i) => <line key={i} x1={x(i)} x2={x(i)} y1={Y0} y2={Y0 + H} stroke="#f1f3f3" />)}
-        {series.map(s => { const pts = s.v.map((v, i) => [x(i), y(Math.min(100, Math.max(0, v)))] as const), d = smooth(pts); return <g key={s.k}><path d={`${d}L${x(data.length - 1)} ${Y0 + H}L${x(0)} ${Y0 + H}Z`} fill={`url(#ov${s.k})`} /><path d={d} fill="none" stroke={COL[s.k]} strokeWidth="2" />{pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="6" fill={COL[s.k]} />)}</g> })}
+        <line x1={ax} x2={ax} y1={Y0} y2={Y0 + H} stroke="#555" strokeDasharray="3 3" />
+        {series.map(s => { const pts = s.v.map((v, i) => [x(i), y(Math.min(100, Math.max(0, v)))] as const), d = smooth(pts); return <g key={s.k}><path d={`${d}L${x(data.length - 1)} ${Y0 + H}L${x(0)} ${Y0 + H}Z`} fill={`url(#ov${s.k})`} /><path d={d} fill="none" stroke={COL[s.k]} strokeWidth="2" />{pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r={i === active ? 7.5 : 6} fill={COL[s.k]} />)}</g> })}
       </svg>
       {data.map((d, i) => <span key={i} className="rs-xl" style={{ left: `${(x(i) / W) * 100}%` }}>{d.label}</span>)}
+      <div className="rs-tip multi" style={{ left: `calc(${(ax / W) * 100}% ${flip ? `- ${tw + 22}px` : '+ 22px'})`, top: tipTop }}>
+        <span>{data[active].label}</span>
+        <b><i className="d" style={{ background: COL.g }} />Resolution <em>{Math.round(data[active].rate)}%</em></b>
+        <b><i className="d" style={{ background: COL.p }} />Escalation <em>{Math.round(data[active].esc)}%</em></b>
+        <b><i className="d" style={{ background: COL.b }} />Confidence <em>{Math.round(data[active].conf)}%</em></b>
+        <i className={flip ? 'r' : 'l'} />
+      </div>
     </div>
   )
 }

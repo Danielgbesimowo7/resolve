@@ -9,6 +9,8 @@ const STEPS = [
   { t: 'Improve', d: 'Turn recurring problems into better answers' },
 ]
 
+const BOXES: Array<[number, number, number, number]> = [[133, 30, 900, 523], [64, 97, 1053, 338], [20, 124, 1136, 285]]
+
 /** Scroll-driven: the card stays sticky while the page scrolls through three segments; the stepper can also be clicked. */
 export default function HowItWorks() {
   const wrap = useRef<HTMLDivElement>(null)
@@ -64,7 +66,7 @@ export default function HowItWorks() {
               <p>{STEPS[step].d}</p>
             </div>
             <div className="vframe">
-              <Stage w={1166} h={553} minK={0.55}>
+              <Stage w={1166} h={553} minK={0.55} box={BOXES[step]} frameH={Math.round(553 * 0.55)}>
                 <div className="vslide" key={step}>
                   {step === 0 && <div className="vpos" style={{ left: 143, top: 36 }}><AiPerf play={play} sidebar wide={880} /></div>}
                   {step === 1 && <Intervene play={play} />}

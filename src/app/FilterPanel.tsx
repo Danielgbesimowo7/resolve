@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ArrowDown01Icon, ArrowLeft02Icon } from '@hugeicons/core-free-icons'
+import { ArrowLeft02Icon } from '@hugeicons/core-free-icons'
 import { CHANNELS, PLANS, type Channel } from '../data/mock'
-import { Icon } from './ui'
+import { Dd, Icon } from './ui'
 
 export interface Filters { channels: Channel[]; intent: string; plan: string; sentiment: string }
 export const NO_FILTERS: Filters = { channels: [], intent: 'all', plan: 'all', sentiment: 'all' }
@@ -11,8 +11,7 @@ const SENTIMENTS = ['Frustrated', 'Neutral', 'Positive']
 function Select({ label, value, onChange, options, all }: { label: string; value: string; onChange: (v: string) => void; options: string[]; all: string }) {
   return (
     <div className="rs-fg"><b>{label}</b>
-      <label className="rs-sel"><span>{value === 'all' ? all : value}</span><Icon icon={ArrowDown01Icon} size={24} />
-        <select value={value} onChange={e => onChange(e.target.value)} aria-label={label}><option value="all">{all}</option>{options.map(o => <option key={o}>{o}</option>)}</select></label>
+      <Dd cls="rs-sel" label={label} value={value} onChange={onChange} options={[['all', all], ...options.map(o => [o, o] as [string, string])]} display={value === 'all' ? all : value} />
     </div>
   )
 }

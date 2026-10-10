@@ -105,7 +105,7 @@ a.rs-tr:hover,div.rs-tr:not(.rs-th):hover{background:#fafafa;cursor:pointer}.rs-
 @media(max-width:560px){.rs-donut{width:170px;height:170px}.rs-donut-w{gap:24px}.rs-top-l{font-size:20px}}
 /* ---- conversations ---- */
 .rs-filter{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 16px;height:48px;font:500 18px Inter,system-ui,sans-serif;color:#222}.rs-filter em{font-style:normal;background:var(--g);color:#fff;border-radius:99px;font-size:13px;padding:1px 8px}
-.rs-c7{grid-template-columns:70px 340fr 296fr 197fr 234fr 129fr 91fr}.rs-tr.tall{height:100px}.rs-th.rs-c7>*{padding:14px 16px}
+.rs-c7{grid-template-columns:70px 310fr 235fr 235fr 215fr 125fr 80fr}.rs-tr.tall{height:100px}.rs-th.rs-c7>*{padding:14px 16px}
 .rs-c7>*:first-child{display:flex;align-items:center;padding-left:24px}.rs-end{display:flex;justify-content:center}
 .rs-cb{appearance:none;-webkit-appearance:none;width:20px;height:20px;border-radius:6px;border:1.5px solid #d8d8d8;background:#f4f4f4;display:grid;place-items:center;cursor:pointer;margin:0;transition:background .15s,border-color .15s}
 .rs-cb:checked{background:var(--g);border-color:var(--g)}.rs-cb:checked::after{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
@@ -211,7 +211,79 @@ body{font-family:Inter,system-ui,sans-serif}
   .rs-yl{display:none}
   .rs-xl{font-size:11px}
   .rs-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .rs-scroll>.rs-tr{min-width:var(--tw,900px)}
-  .rs-scroll>.rs-c5{--tw:900px}.rs-scroll>.rs-c7{--tw:1000px}.rs-scroll>.rs-cI{--tw:760px}
-  .rs-scroll>.rs-cC{--tw:1000px}.rs-scroll>.rs-cK{--tw:1100px}.rs-scroll>.rs-cT{--tw:560px}
+  .rs-scroll>.rs-tr{width:max-content;min-width:100%;height:auto;min-height:64px}
+  .rs-scroll>.rs-tr>*{white-space:nowrap;min-width:0}
+  .rs-scroll>.rs-c5{grid-template-columns:270px 230px 170px 190px 170px}
+  .rs-scroll>.rs-c7{grid-template-columns:56px 260px 290px 200px 200px 130px 80px}
+  .rs-scroll>.rs-cI{grid-template-columns:230px 150px 150px 270px}
+  .rs-scroll>.rs-cC{grid-template-columns:310px 140px 170px 190px 170px 190px 80px}
+  .rs-scroll>.rs-cK{grid-template-columns:270px 170px 180px 150px 520px 150px}
+  .rs-scroll>.rs-cT{grid-template-columns:320px 170px 120px}
 }
+/* ===== Mobile polish: sidebar, panel, settings ===== */
+@media(max-width:700px){
+  .rs-side{width:min(272px,80vw);padding:18px 12px 16px}
+  .rs-logo{font-size:20px;line-height:24px;margin-left:4px}
+  .rs-side>.rs-hr:first-of-type{margin:16px 0 14px}
+  .rs-ws{padding:6px;margin-bottom:14px}.rs-ws-l{gap:10px}
+  .rs-wsav{width:32px;height:32px;font-size:18px}
+  .rs-ws b{font-size:16px}.rs-ws small{font-size:13px;margin-top:2px}
+  .rs-menu{gap:4px}
+  .rs-it{height:40px;font-size:15px;padding:0 10px;border-radius:10px}
+  .rs-menu+.rs-hr{margin:12px 0}
+  .rs-agent{margin:auto 0 0;width:100%;padding:10px;border-radius:18px;gap:8px}
+  .rs-agent-h{padding:6px 8px;border-radius:12px}.rs-agent-h span{font-size:14px}
+  .rs-agent-ico{width:26px;height:26px}.rs-live{font-size:12px}.rs-live i{width:8px;height:8px}
+  .rs-agent small{font-size:12px}
+  .rs-agent .rs-btn-o{padding:6px 12px;font-size:13px}
+  /* customer panel */
+  .rs-panel{padding:14px 12px;gap:14px}
+  .rs-pcard{padding:12px;gap:16px;border-radius:20px}
+  .rs-mini3{gap:8px}.rs-mini3>div{padding:10px 8px;min-width:0}.rs-mini3 span{font-size:11px}.rs-mini3 b{font-size:15px}
+  .rs-panel .rs-tabs{display:flex;justify-content:space-between;gap:0;overflow:hidden}
+  .rs-panel .rs-tabs button{margin-right:0;padding:8px 0 12px;font-size:13.5px;flex:0 1 auto;white-space:nowrap}
+  /* settings */
+  .rs-stabs{flex-wrap:nowrap;gap:22px;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}.rs-stabs::-webkit-scrollbar{display:none}
+  .rs-stabs button{flex:none;white-space:nowrap;font-size:15px;border-bottom:2px solid transparent;margin-bottom:-2px}
+  .rs-stabs button.on{border-bottom-color:var(--g)}.rs-stabs i{display:none}
+  .rs-inv input{min-width:0;font-size:15px}.rs-inv .rs-green,.rs-inv button{flex:none;padding:0 14px;font-size:15px}
+}
+@media(max-width:700px){
+  .rs-between{flex-wrap:wrap;gap:10px 12px;align-items:center!important}
+  .rs-between>.rs-ttl{flex:1 1 auto;min-width:0}
+  .rs-link{white-space:nowrap;font-size:14px;gap:6px}.rs-link svg{width:18px;height:18px}
+}
+@media(max-width:700px){.rs-scroll>.rs-cK>:nth-child(5),.rs-scroll>.rs-cK>:nth-child(5) *{white-space:normal}.rs-scroll>.rs-cK>:nth-child(5){overflow:visible;text-overflow:clip;padding-right:16px}}
+@media(max-width:1000px){.rs-detail{grid-template-columns:minmax(0,1fr)}.rs-dr{min-width:0}}
+@media(max-width:700px){
+  .rs-dhead{padding:14px 16px}.rs-dbody{padding:16px;gap:16px}.rs-thread{padding:16px}.rs-dtitle h3{font-size:20px}
+  .rs-dr .rs-tabs,.rs-detail .rs-tabs{gap:16px;padding:0 4px;overflow-x:auto;scrollbar-width:none}.rs-detail .rs-tabs button{font-size:14px;white-space:nowrap;flex:none}
+  .rs-compose input{font-size:16px}
+}
+
+/* ===== Custom dropdowns, floating menus, tooltip, tabs (v3) ===== */
+.rs-ddb{display:flex;align-items:center;gap:inherit;width:100%;background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer;outline:0}
+.rs-ddw.rs-sel .rs-ddb{justify-content:space-between}
+.rs-ddw:focus-within{border-color:var(--g)}
+.rs-ddw.off{opacity:.55}.rs-ddw.off .rs-ddb{cursor:not-allowed}
+.rs-ddb svg{flex:none;transition:transform .2s}.rs-ddb .rs-flipi{transform:rotate(180deg)}
+.rs-ddb:focus-visible{outline:2px solid var(--g);outline-offset:6px;border-radius:8px}
+.rs-fpop{position:fixed;z-index:90;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.12);padding:8px;display:grid;gap:2px;animation:rsin .16s ease;max-width:calc(100vw - 16px);color:var(--ink);font:500 15px Inter,system-ui,sans-serif}
+.rs-fpop button,.rs-fpop>a{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:none;text-align:left;padding:10px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font:500 15px Inter,system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.rs-fpop button:hover,.rs-fpop>a:hover{background:#f5f5f5}
+.rs-dlist [role=listbox]{display:grid;gap:2px}
+.rs-dlist button.on{background:#f1fbf7;color:#079d6c}.rs-dlist button svg{color:var(--g)}
+.rs-tip.multi{width:186px;gap:8px;padding:12px 14px}
+.rs-tip.multi b{display:flex;align-items:center;gap:8px;font-size:13px}
+.rs-tip.multi b i.d{position:static;width:9px;height:9px;border-radius:50%;transform:none;flex:none}
+.rs-tip.multi b em{margin-left:auto;font-style:normal;color:#222;font-weight:600}
+.rs-tip.multi>i.l,.rs-tip.multi>i.r{top:24px}
+/* customer profile tabs: always fit the panel */
+.rs-panel .rs-tabs{display:flex;justify-content:space-between;gap:0;overflow:hidden}
+.rs-panel .rs-tabs button{margin-right:0;flex:0 1 auto;white-space:nowrap}
+/* settings tabs: the underline belongs to the active tab, so it always follows the selection */
+.rs-stabs i{display:none}
+.rs-stabs button{border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s}
+.rs-stabs button.on{border-bottom-color:var(--g)}
+.rs-stabs button:hover{color:#222}
+@media(min-width:701px) and (max-width:1250px){.rs-scroll>.rs-c7,.rs-scroll>.rs-cC{min-width:1000px}.rs-scroll>.rs-c5{min-width:860px}}

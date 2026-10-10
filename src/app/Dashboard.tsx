@@ -3,17 +3,12 @@ import { Link } from 'react-router-dom'
 import { ArrowDown01Icon, ArrowRight02Icon, ArrowUp02Icon, BotIcon, Calendar05Icon, Clock01Icon, GoogleGeminiIcon, Message02Icon, UserMultipleIcon } from '@hugeicons/core-free-icons'
 import { useStore, type Range } from '../state/store'
 import { computeStats, timeAgo, type Conversation, type Status } from '../data/mock'
-import { Avatar, Icon, StatusPill, useNarrow } from './ui'
+import { Avatar, Dd, Icon, StatusPill, useNarrow, useWidth } from './ui'
 import { useAuth } from '../state/auth'
 
 export function RangePicker() {
   const { state, dispatch } = useStore()
-  return (
-    <label className="rs-range"><Icon icon={Calendar05Icon} size={24} /><span>Last {state.range} days</span><Icon icon={ArrowDown01Icon} size={24} />
-      <select value={state.range} onChange={e => dispatch({ type: 'range', range: Number(e.target.value) as Range })} aria-label="Date range">
-        <option value={7}>Last 7 days</option><option value={14}>Last 14 days</option><option value={30}>Last 30 days</option>
-      </select></label>
-  )
+  return <Dd cls="rs-range" label="Date range" align="right" value={String(state.range)} onChange={v => dispatch({ type: 'range', range: Number(v) as Range })} options={[['7', 'Last 7 days'], ['14', 'Last 14 days'], ['30', 'Last 30 days']]} lead={<Icon icon={Calendar05Icon} size={24} />} display={`Last ${state.range} days`} />
 }
 
 export function Delta({ cur, prev, invert }: { cur: number; prev: number; invert?: boolean }) {
@@ -33,9 +28,10 @@ export function LineChart({ series, title = 'conversations' }: { series: Array<{
   const pts = series.map((s, i) => [X0 + (i * PW) / Math.max(1, series.length - 1), Y0 + H - (s.count / max) * H] as const)
   const d = pts.reduce((a, p, i) => { if (!i) return `M${p[0]} ${p[1]}`; const q = pts[i - 1], cx = (q[0] + p[0]) / 2; return `${a}C${cx} ${q[1]} ${cx} ${p[1]} ${p[0]} ${p[1]}` }, '')
   const active = hover ?? Math.round((series.length - 1) * 0.57)
-  const [ax, ay] = pts[active], flip = ax > W - 190
+  const [wref, cw] = useWidth<HTMLDivElement>()
+  const [ax, ay] = pts[active], px = (ax / W) * cw, flip = cw > 0 && px + 22 + 156 > cw - 4
   return (
-    <div className="rs-chartw" onMouseLeave={() => setHover(null)} onMouseMove={e => { const r = e.currentTarget.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * W; setHover(pts.reduce((b, p, i) => (Math.abs(p[0] - x) < Math.abs(pts[b][0] - x) ? i : b), 0)) }}>
+    <div ref={wref} className="rs-chartw" onMouseLeave={() => setHover(null)} onMouseMove={e => { const r = e.currentTarget.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * W; setHover(pts.reduce((b, p, i) => (Math.abs(p[0] - x) < Math.abs(pts[b][0] - x) ? i : b), 0)) }}>
       {[0, 1, 2, 3, 4].map(i => <span key={i} className="rs-yl" style={{ top: Y0 + (H * (4 - i)) / 4 }}>{i === 0 ? '0' : fmtK((max * i) / 4)}</span>)}
       <svg viewBox={`0 0 ${W} 250`} preserveAspectRatio="none">
         <defs><linearGradient id="rsg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#01c88a" stopOpacity=".22" /><stop offset="1" stopColor="#01c88a" stopOpacity="0" /></linearGradient></defs>
@@ -46,7 +42,7 @@ export function LineChart({ series, title = 'conversations' }: { series: Array<{
         {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r={i === active ? 7 : 6} fill="#01c88a" />)}
       </svg>
       {pts.map((p, i) => (series.length <= 8 || i % 2 === 0) && <span key={i} className="rs-xl" style={{ left: `${(p[0] / W) * 100}%` }}>{series[i].label}</span>)}
-      <div className="rs-tip" style={{ left: `${((flip ? ax - 174 : ax + 22) / W) * 100}%`, top: Math.max(0, ay - 36) }}><span>{series[active].label}</span><b>{series[active].count.toLocaleString()} {title}</b><i className={flip ? 'r' : 'l'} /></div>
+      <div className="rs-tip" style={{ left: `calc(${(ax / W) * 100}% ${flip ? '- 178px' : '+ 22px'})`, top: Math.max(0, ay - 36) }}><span>{series[active].label}</span><b>{series[active].count.toLocaleString()} {title}</b><i className={flip ? 'r' : 'l'} /></div>
     </div>
   )
 }

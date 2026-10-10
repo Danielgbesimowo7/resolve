@@ -15,21 +15,30 @@ export function useInView<T extends Element>(threshold = 0.35) {
 }
 
 /** Renders children on a fixed w×h design canvas and scales it to the container width. */
-export function Stage({ w, h, children, className = '', minK = 0.5 }: { w: number; h: number; children: ReactNode; className?: string; minK?: number }) {
+export function Stage({ w, h, children, className = '', minK = 0.5, box, frameH }: { w: number; h: number; children: ReactNode; className?: string; minK?: number; box?: [number, number, number, number]; frameH?: number }) {
   const ref = useRef<HTMLDivElement>(null)
-  const [m, setM] = useState({ k: 1, x: 0 })
+  const [m, setM] = useState({ k: 1, x: 0, y: 0, hh: h, narrow: false })
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const fit = () => { const cw = el.clientWidth, k = Math.max(minK, cw / w); setM({ k, x: Math.min(0, (cw - w * k) / 2) }) }
+    const fit = () => {
+      const cw = el.clientWidth
+      // phones: show the whole illustration (never crop it): fit the content box to the width
+      if (box && cw < 700) {
+        const k = cw / box[2], hh = frameH ?? box[3] * k
+        // centre the whole illustration in the (optionally taller) frame
+        setM({ k, x: -box[0] * k, y: (hh - box[3] * k) / 2 - box[1] * k, hh, narrow: true }); return
+      }
+      const k = Math.max(minK, cw / w); setM({ k, x: Math.min(0, (cw - w * k) / 2), y: 0, hh: h * k, narrow: false })
+    }
     const ro = new ResizeObserver(fit)
     ro.observe(el)
     fit()
     return () => ro.disconnect()
-  }, [w, minK])
+  }, [w, minK, frameH, box?.[0], box?.[1], box?.[2], box?.[3]])
   return (
-    <div ref={ref} className={'vstage ' + className} style={{ height: h * m.k }}>
-      <div className="vcv" style={{ width: w, height: h, transform: `translateX(${m.x}px) scale(${m.k})` }}>{children}</div>
+    <div ref={ref} className={'vstage ' + className} style={{ height: m.hh }}>
+      <div className="vcv" style={{ width: w, height: h, transform: `translate(${m.x}px,${m.y}px) scale(${m.k})` }}>{children}</div>
     </div>
   )
 }

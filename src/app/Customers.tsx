@@ -4,7 +4,7 @@ import { ArrowDown01Icon, ArrowLeft02Icon, FilterHorizontalIcon, Happy01Icon, Mo
 import { useStore } from '../state/store'
 import { useAuth } from '../state/auth'
 import { PLANS, STATUS_LABEL, timeAgo } from '../data/mock'
-import { Avatar, Icon, StatCards, StatusPill } from './ui'
+import { Avatar, Dd, Icon, StatCards, StatusPill } from './ui'
 import { RangePicker } from './Dashboard'
 import { buildCustomers, type Customer } from './customerData'
 import { inWindow } from './metrics'
@@ -16,7 +16,7 @@ export const Face = ({ n }: { n: number }) => { const s = SAT(n); return <span c
 
 function Pick({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: Array<[string, string]> }) {
   const cur = options.find(o => o[0] === value)
-  return <label className="rs-dd"><span>{value === options[0][0] ? label : cur?.[1]}</span><Icon icon={ArrowDown01Icon} size={24} /><select value={value} onChange={e => onChange(e.target.value)} aria-label={label}>{options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
+  return <Dd cls="rs-dd" label={label} value={value} onChange={onChange} options={options} display={value === options[0][0] ? label : cur?.[1]} />
 }
 
 function Panel({ c, onClose }: { c: Customer; onClose: () => void }) {
