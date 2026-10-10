@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Clock01Icon, GoogleGeminiIcon, Message02Icon, UserMultipleIcon } from '@hugeicons/core-free-icons'
 import { useStore } from '../state/store'
 import { buckets, intentStats, smooth, summary } from './metrics'
-import { Icon, StatCards, useNarrow, useWidth } from './ui'
+import { Icon, StatCards, useNarrow, useWidth, ChartScroll } from './ui'
 import { Donut, RangePicker, fmtK } from './Dashboard'
 import { IntentCard } from './AiPerformance'
 
@@ -17,7 +17,7 @@ function Stacked({ data }: { data: ReturnType<typeof buckets> }) {
   const y = (v: number) => (v / max) * H
   const [wref, cw] = useWidth<HTMLDivElement>()
   return (
-    <div ref={wref} className="rs-chartw" style={{ height: 250 }} onMouseLeave={() => setHover(null)}>
+    <ChartScroll><div ref={wref} className="rs-chartw" style={{ height: 250 }} onMouseLeave={() => setHover(null)}>
       {[0, 1, 2, 3, 4].map(i => <span key={i} className="rs-yl" style={{ top: Y0 + H - (H * i) / 4 }}>{i === 0 ? '0' : fmtK((max * i) / 4)}</span>)}
       <svg viewBox={`0 0 ${W} 250`} preserveAspectRatio="none">
         {[0, 1, 2, 3, 4].map(i => <line key={i} x1={X0} x2={W} y1={Y0 + (H * i) / 4} y2={Y0 + (H * i) / 4} stroke="#eef0f0" />)}
@@ -27,7 +27,7 @@ function Stacked({ data }: { data: ReturnType<typeof buckets> }) {
       </svg>
       {rows.map((r, i) => <span key={i} className="rs-xl" style={{ left: `${((X0 + slot * i + slot / 2) / W) * 100}%` }}>{r.label}</span>)}
       {hover !== null && <div className="rs-tip" style={{ left: `calc(${((X0 + slot * hover + slot / 2) / W) * 100}% ${(((X0 + slot * hover + slot / 2) / W) * cw + 30 + 160 > cw - 4) ? '- 190px' : '+ 30px'})`, top: 40 }}><span>{rows[hover].label}</span><b>{rows[hover].ai} AI · {rows[hover].hu} human · {rows[hover].un} unresolved</b></div>}
-    </div>
+    </div></ChartScroll>
   )
 }
 
@@ -39,7 +39,7 @@ function Trend({ data }: { data: ReturnType<typeof buckets> }) {
   const d = smooth(pts), a = hover ?? data.length - 2, [ax, ay] = pts[a]
   const [wref2, cw2] = useWidth<HTMLDivElement>(), flip = cw2 > 0 && (ax / W) * cw2 + 22 + 100 > cw2 - 4
   return (
-    <div ref={wref2} className="rs-chartw" style={{ height: 250 }} onMouseLeave={() => setHover(null)} onMouseMove={e => { const r = e.currentTarget.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * W; setHover(pts.reduce((b, p, i) => (Math.abs(p[0] - x) < Math.abs(pts[b][0] - x) ? i : b), 0)) }}>
+    <ChartScroll><div ref={wref2} className="rs-chartw" style={{ height: 250 }} onMouseLeave={() => setHover(null)} onMouseMove={e => { const r = e.currentTarget.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * W; setHover(pts.reduce((b, p, i) => (Math.abs(p[0] - x) < Math.abs(pts[b][0] - x) ? i : b), 0)) }}>
       {[0, 25, 50, 75, 100].map(t => <span key={t} className="rs-yl" style={{ top: Y0 + H - (t / 100) * H }}>{t === 0 ? '0' : `${t}%`}</span>)}
       <svg viewBox={`0 0 ${W} 250`} preserveAspectRatio="none">
         <defs><linearGradient id="rtg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#01c88a" stopOpacity=".2" /><stop offset="1" stopColor="#01c88a" stopOpacity="0" /></linearGradient></defs>
@@ -49,7 +49,7 @@ function Trend({ data }: { data: ReturnType<typeof buckets> }) {
       </svg>
       {pts.map((p, i) => <span key={i} className="rs-xl" style={{ left: `${(p[0] / W) * 100}%` }}>{data[i].label}</span>)}
       <div className="rs-tip" style={{ width: 'auto', minWidth: 90, left: `calc(${(ax / W) * 100}% ${flip ? '- 112px' : '+ 22px'})`, top: Math.max(0, ay - 36) }}><span>{data[a].label}</span><b>{data[a].rate.toFixed(1)}%</b><i className={flip ? 'r' : 'l'} /></div>
-    </div>
+    </div></ChartScroll>
   )
 }
 

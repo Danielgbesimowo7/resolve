@@ -116,3 +116,8 @@ export function useWidth<T extends HTMLElement>() {
   }, [])
   return [ref, w] as const
 }
+
+/** Wraps a chart so it can be swiped sideways on phones (the chart keeps a fixed minimum width there). */
+export function ChartScroll({ children }: { children: ReactNode }) {
+  return <div className="rs-cs">{children}</div>
+}

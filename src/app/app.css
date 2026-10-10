@@ -287,3 +287,74 @@ body{font-family:Inter,system-ui,sans-serif}
 .rs-stabs button.on{border-bottom-color:var(--g)}
 .rs-stabs button:hover{color:#222}
 @media(min-width:701px) and (max-width:1250px){.rs-scroll>.rs-c7,.rs-scroll>.rs-cC{min-width:1000px}.rs-scroll>.rs-c5{min-width:860px}}
+
+/* ===== Mobile type scale (matches the sidebar: 15 nav / 13 secondary) ===== */
+@media(max-width:700px){
+  .rs-app{font-size:14px}
+  .rs-top-l{font-size:17px}
+  .rs-head h2{font-size:20px;line-height:1.25}
+  .rs-head p,.rs-head.sub p{font-size:14px;margin-top:4px;line-height:1.45}
+  .rs-stat-h{font-size:14px;padding:12px 14px 12px 12px;gap:8px}
+  .rs-stat-h svg{width:20px;height:20px}
+  .rs-stat-b{padding:14px 12px;gap:8px}
+  .rs-num{font-size:26px}
+  .rs-delrow,.rs-delrow span{font-size:13px}.rs-delta{font-size:13px}.rs-delta svg{width:16px;height:16px}
+  .rs-ttl{font-size:16px}
+  .rs-sub18,.rs-sum{font-size:14px;line-height:1.5}
+  .rs-chip{font-size:13px;padding:6px 12px;gap:8px}.rs-chip em{font-size:12px;padding:1px 8px}
+  .rs-filter{font-size:14px;height:40px;padding:6px 12px}
+  .rs-range{font-size:14px;height:38px}.rs-range svg{width:20px;height:20px}
+  .rs-dd,.rs-sel{font-size:14px}.rs-dd svg,.rs-sel svg{width:20px;height:20px}
+  .rs-green{font-size:14px;height:40px;padding:0 16px;border-radius:10px}
+  .rs-btn-o{font-size:13px;padding:6px 12px;border-radius:10px}
+  .rs-pill,.rs-plan,.rs-tr .rs-pill{font-size:12px;padding:4px 10px}
+  .rs-tr{font-size:14px}
+  .rs-th>*,.rs-th>span{font-size:13px;padding-top:12px;padding-bottom:12px}
+  .rs-cu b,.rs-tr .rs-cu b{font-size:14px}.rs-cu small,.rs-tr .rs-cu small{font-size:12.5px}
+  .rs-is span,.rs-is small{font-size:13px}.rs-face,.rs-ag,.rs-plain{font-size:14px}
+  .rs-pager,.rs-pager button{font-size:13px}.rs-pager button{padding:6px 12px}
+  .rs-donut-c b{font-size:26px}.rs-donut-c span{font-size:13px}
+  .rs-legend li{font-size:14px}.rs-legend li small{font-size:12px}
+  .rs-key{font-size:13px;gap:8px 14px}
+  .rs-insight b{font-size:15px}.rs-insight span{font-size:13px}
+  .rs-under b{font-size:15px}.rs-under span:not(.rs-delta){font-size:13px;margin-top:6px}
+  .rs-link{font-size:13px}
+  .rs-tip{font-size:12px}.rs-tip b{font-size:13px}
+  .rs-pop{font-size:14px}.rs-pop button,.rs-pop>a{font-size:14px}
+  /* conversation detail */
+  .rs-dtitle h3{font-size:18px}.rs-clock,.rs-seen{font-size:13px}.rs-back{font-size:14px}
+  .rs-info b{font-size:15px}.rs-info span{font-size:12.5px}
+  .rs-msgs p,.rs-msgs{font-size:14px}.rs-compose input{font-size:14px}
+  .rs-rc-t{font-size:15px}.rs-dr li{font-size:14px}.rs-dr{font-size:14px}
+  /* settings + panel */
+  .rs-sh b{font-size:17px}.rs-sh small,.rs-org small{font-size:13px;margin-top:4px}.rs-org b{font-size:16px}
+  .rs-trow b{font-size:15px}.rs-trow small{font-size:13px}
+  .rs-nav{font-size:15px}.rs-nav small{font-size:13px}
+  .rs-planbox b{font-size:20px}.rs-planbox small{font-size:13px}.rs-incl{font-size:14px}.rs-sc li{font-size:14px}
+  .rs-stabs button{font-size:14px}
+  .rs-pcard .rs-cu b[style]{font-size:17px!important}.rs-pcard .rs-cu small{font-size:13px}
+  .rs-kvl b{font-size:15px}.rs-kvl>div{font-size:14px}.rs-kvl em{font-size:14px}.rs-rcv{font-size:14px}
+  .rs-panel .rs-tabs button{font-size:13.5px}
+  .rs-empty{font-size:14px}
+}
+/* ===== Mobile: charts scroll sideways and respond to touch ===== */
+.rs-cs{position:relative}
+@media(max-width:700px){
+  .rs-cs{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -14px;padding:0 20px 0 14px;touch-action:pan-x pan-y;overscroll-behavior-x:contain}
+  .rs-cs::-webkit-scrollbar{display:none}
+  .rs-cs>.rs-chartw{min-width:620px}
+  .rs-cs>.rs-chartw .rs-xl{font-size:11px}
+}
+@media(max-width:700px){
+  .rs-gt b,.rs-gt small,.rs-rec,.rs-rec span{font-size:13px}.rs-gt b{font-size:14px}
+  .rs-fld>span{font-size:13px}.rs-fld button{font-size:14px}
+  .rs-pl b{font-size:16px}.rs-pl strong{font-size:24px}.rs-pl small,.rs-pl li{font-size:13px}
+  .rs-m-h b,.rs-m-h span{font-size:13px}
+  .rs-kv span,.rs-kv b{font-size:13px}
+  .rs-sug b{font-size:14px}.rs-sug p{font-size:13px}
+  .rs-qa .rs-green{font-size:14px}
+  .rs-info b{font-size:14px}
+  .rs-org b{font-size:15px}
+  .rs-planbox b{font-size:18px}
+  .rs-keys kbd{display:none}
+}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight02Icon, ArrowUp02Icon, Clock01Icon, GoogleGeminiIcon } from '@hugeicons/core-free-icons'
 import { useStore } from '../state/store'
 import { buckets, intentStats, smooth, summary } from './metrics'
-import { Avatar, CircleCheckBig, Icon, Scale3d, StatCards, useNarrow, useWidth } from './ui'
+import { Avatar, CircleCheckBig, Icon, Scale3d, StatCards, ChartScroll, useNarrow, useWidth } from './ui'
 import { Donut, RangePicker } from './Dashboard'
 
 const FACE: Record<string, string> = { Billing: 'maya', Account: 'alex', Refund: 'jordan', Technicals: 'taylor', General: 'casey' }
@@ -32,9 +32,10 @@ function Over({ data }: { data: ReturnType<typeof buckets> }) {
   const active = hover ?? Math.round((data.length - 1) * 0.57)
   const [wref, cw] = useWidth<HTMLDivElement>()
   const ax = x(active), tw = 186, px = (ax / W) * cw, flip = cw > 0 && px + 22 + tw > cw - 4
+  const pickAt = (e: React.PointerEvent<HTMLDivElement>) => { const r = e.currentTarget.getBoundingClientRect(), px = ((e.clientX - r.left) / r.width) * W; setHover(data.reduce((b, _, i) => (Math.abs(x(i) - px) < Math.abs(x(b) - px) ? i : b), 0)) }
   const tipTop = Math.max(0, Math.min(y(Math.min(100, data[active].rate)), y(Math.min(100, data[active].esc + 60))) - 20)
   return (
-    <div ref={wref} className="rs-chartw" style={{ height: 250 }} onPointerLeave={() => setHover(null)} onPointerMove={e => { const r = e.currentTarget.getBoundingClientRect(), px = ((e.clientX - r.left) / r.width) * W; setHover(data.reduce((b, _, i) => (Math.abs(x(i) - px) < Math.abs(x(b) - px) ? i : b), 0)) }}>
+    <ChartScroll><div ref={wref} className="rs-chartw" style={{ height: 250 }} onPointerLeave={e => { if (e.pointerType === 'mouse') setHover(null) }} onPointerDown={e => pickAt(e)} onPointerMove={e => { if (e.pointerType === 'mouse') pickAt(e) }}>
       {[0, 25, 50, 75, 100].map(t => <span key={t} className="rs-yl" style={{ top: y(t) }}>{t}</span>)}
       <svg viewBox={`0 0 ${W} 250`} preserveAspectRatio="none">
         <defs>{(['g', 'p', 'b'] as const).map(k => <linearGradient key={k} id={`ov${k}`} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor={COL[k]} stopOpacity={k === 'g' ? 0.1 : 0.18} /><stop offset="1" stopColor={COL[k]} stopOpacity="0" /></linearGradient>)}</defs>
@@ -51,7 +52,7 @@ function Over({ data }: { data: ReturnType<typeof buckets> }) {
         <b><i className="d" style={{ background: COL.b }} />Confidence <em>{Math.round(data[active].conf)}%</em></b>
         <i className={flip ? 'r' : 'l'} />
       </div>
-    </div>
+    </div></ChartScroll>
   )
 }
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowDown01Icon, ArrowRight02Icon, ArrowUp02Icon, BotIcon, Calendar05Icon, Clock01Icon, GoogleGeminiIcon, Message02Icon, UserMultipleIcon } from '@hugeicons/core-free-icons'
 import { useStore, type Range } from '../state/store'
 import { computeStats, timeAgo, type Conversation, type Status } from '../data/mock'
-import { Avatar, Dd, Icon, StatusPill, useNarrow, useWidth } from './ui'
+import { Avatar, ChartScroll, Dd, Icon, StatusPill, useNarrow, useWidth } from './ui'
 import { useAuth } from '../state/auth'
 
 export function RangePicker() {
@@ -31,7 +31,7 @@ export function LineChart({ series, title = 'conversations' }: { series: Array<{
   const [wref, cw] = useWidth<HTMLDivElement>()
   const [ax, ay] = pts[active], px = (ax / W) * cw, flip = cw > 0 && px + 22 + 156 > cw - 4
   return (
-    <div ref={wref} className="rs-chartw" onMouseLeave={() => setHover(null)} onMouseMove={e => { const r = e.currentTarget.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * W; setHover(pts.reduce((b, p, i) => (Math.abs(p[0] - x) < Math.abs(pts[b][0] - x) ? i : b), 0)) }}>
+    <ChartScroll><div ref={wref} className="rs-chartw" onMouseLeave={() => setHover(null)} onMouseMove={e => { const r = e.currentTarget.getBoundingClientRect(), x = ((e.clientX - r.left) / r.width) * W; setHover(pts.reduce((b, p, i) => (Math.abs(p[0] - x) < Math.abs(pts[b][0] - x) ? i : b), 0)) }}>
       {[0, 1, 2, 3, 4].map(i => <span key={i} className="rs-yl" style={{ top: Y0 + (H * (4 - i)) / 4 }}>{i === 0 ? '0' : fmtK((max * i) / 4)}</span>)}
       <svg viewBox={`0 0 ${W} 250`} preserveAspectRatio="none">
         <defs><linearGradient id="rsg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#01c88a" stopOpacity=".22" /><stop offset="1" stopColor="#01c88a" stopOpacity="0" /></linearGradient></defs>
@@ -43,7 +43,7 @@ export function LineChart({ series, title = 'conversations' }: { series: Array<{
       </svg>
       {pts.map((p, i) => (series.length <= 8 || i % 2 === 0) && <span key={i} className="rs-xl" style={{ left: `${(p[0] / W) * 100}%` }}>{series[i].label}</span>)}
       <div className="rs-tip" style={{ left: `calc(${(ax / W) * 100}% ${flip ? '- 178px' : '+ 22px'})`, top: Math.max(0, ay - 36) }}><span>{series[active].label}</span><b>{series[active].count.toLocaleString()} {title}</b><i className={flip ? 'r' : 'l'} /></div>
-    </div>
+    </div></ChartScroll>
   )
 }
 
